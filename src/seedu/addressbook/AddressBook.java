@@ -107,7 +107,7 @@ public class AddressBook {
 
     private static final String COMMAND_FIND_WORD = "find";
     private static final String COMMAND_FIND_DESC = "Finds all persons whose names contain any of the specified "
-                                        + "keywords (case-sensitive) and displays them as a list with index numbers.";
+                                        + "keywords (NO-case-sensitive) and displays them as a list with index numbers.";
     private static final String COMMAND_FIND_PARAMETERS = "KEYWORD [MORE_KEYWORDS]";
     private static final String COMMAND_FIND_EXAMPLE = COMMAND_FIND_WORD + " alice bob charlie";
 
@@ -484,9 +484,28 @@ public class AddressBook {
      */
     private static ArrayList<String[]> getPersonsWithNameContainingAnyKeyword(Collection<String> keywords) {
         final ArrayList<String[]> matchedPersons = new ArrayList<>();
+        final ArrayList<String> lower_keywords = new ArrayList<>();
+        //get a lowercase keywords list
+        for(String newSplitWords : keywords)
+        {
+            //System.out.println(newSplitWords);
+            lower_keywords.add(newSplitWords.toLowerCase());
+        }
+        //for(String a : lower_keywords)
+        //{
+        //    System.out.println(a);
+        //}
         for (String[] person : getAllPersonsInAddressBook()) {
+            //System.out.println(person);
             final Set<String> wordsInName = new HashSet<>(splitByWhitespace(getNameFromPerson(person)));
-            if (!Collections.disjoint(wordsInName, keywords)) {
+            //get a lower case wordsInName
+            final ArrayList<String> lower_wordsInName = new ArrayList<>();
+            for(String inWord : wordsInName)
+            {
+                lower_wordsInName.add(inWord.toLowerCase());
+            }
+            //compare lowercase to avoid case-sensitivity
+            if (!Collections.disjoint(lower_wordsInName, lower_keywords)) {
                 matchedPersons.add(person);
             }
         }
